@@ -4,14 +4,6 @@
 #include <vector>
 #include <regex>
 
-struct password_struct
-{
-    int min;
-    int max;
-    char policy_char;
-    std::string password;
-};
-
 std::vector<std::string> read_file_line_by_line(const char* filename)
 {
     std::ifstream file{};
