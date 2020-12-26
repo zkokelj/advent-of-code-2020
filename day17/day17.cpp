@@ -25,22 +25,31 @@ std::vector<std::string> read_file_line_by_line(const char* filename)
 class Point
 {
 public:
-    int x, y, z;
+    int x, y, z, w;
     Point(int _x, int _y, int _z)
     {
         x = _x;
         y = _y;
         z = _z;
+        w = 0;
+    }
+
+    Point(int _x, int _y, int _z, int _w)
+    {
+        x = _x;
+        y = _y;
+        z = _z;
+        w = _w;
     }
 
     void PrintPoint() const 
     {
-        std::cout << "Point: " << x << ", " << y << ", " << z << std::endl;
+        std::cout << "Point: " << x << ", " << y << ", " << z << ", " << w << std::endl;
     }
 
     bool operator==(const Point& other) const 
     {
-        return (x == other.x && y == other.y && z == other.z);
+        return (x == other.x && y == other.y && z == other.z && w == other.w);
     }
 };
 
@@ -151,6 +160,64 @@ int part_one(const std::vector<Point>& initialActivePoints)
     return activePoints.size();
 }
 
+int part_two(const std::vector<Point>& initialActivePoints)
+{
+    std::vector<Point> activePoints = initialActivePoints;
+    
+    // 6 iterations
+    for(int i = 0; i < 6; i++)
+    {
+        std::unordered_map<Point, int, hash_f> marked;
+
+        // we only need to check around activated points
+        for(Point& p: activePoints)
+        {
+            // now look around them in three directions (distance 1)
+            for(int x_i = -1; x_i <= 1; x_i++)
+            {
+                for(int y_i = -1; y_i <= 1; y_i++)
+                {
+                    for(int z_i = -1; z_i <= 1; z_i++)
+                    {
+                        for(int w_i = -1; w_i <= 1; w_i++)
+                        {
+                            if(z_i == y_i && x_i == y_i && y_i == w_i && x_i == 0)
+                                continue;
+                        
+                            marked[Point(p.x+x_i, p.y+y_i, p.z+z_i, p.w+w_i)]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        //new activated points
+        std::vector<Point> new_activated;
+        for(auto& element: marked)
+        {
+            if(element.second == 3)
+            {
+                new_activated.push_back(element.first);
+            }
+
+            if(element.second == 2)
+            {
+                for(auto& ap: activePoints)
+                {
+                    if(element.first == ap)
+                    {
+                        new_activated.push_back(element.first);
+                        break;
+                    }
+                }
+            }
+        }
+
+        activePoints = new_activated;
+    }
+
+    return activePoints.size();
+}
 
 int main()
 {
@@ -171,5 +238,5 @@ int main()
     }
 
     std::cout << "Part1: " << part_one(activePoints) << std::endl;
-    // std::cout << "Part2: " << part_one(initialState) << std::endl;
+    std::cout << "Part2: " << part_two(activePoints) << std::endl;
 }
