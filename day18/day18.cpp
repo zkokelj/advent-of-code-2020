@@ -258,7 +258,3 @@ int main()
     
 
 }
-
-// Interesting solutions
-//- https://www.youtube.com/watch?v=aNwMQOFzQ1w
-//- https://github.com/mateom99/Advent-of-Code/blob/main/2020/Day%2018/day18.cpp
